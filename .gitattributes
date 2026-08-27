@@ -1,0 +1,16 @@
+# Normalise line endings so a Windows checkout and a build agent agree, and a
+# whole-file CRLF change never shows up as everything being rewritten.
+* text=auto
+
+# Always LF: these are read by tools that dislike CRLF.
+*.sh text eol=lf
+
+# Always CRLF: cmd interprets a LF-only script inconsistently.
+*.cmd text eol=crlf
+*.bat text eol=crlf
+
+# Never touched.
+*.png binary
+*.jpg binary
+*.ico binary
+*.svg text

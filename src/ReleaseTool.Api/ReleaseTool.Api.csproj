@@ -1,0 +1,71 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>YOUR_USER_SECRETS_ID</UserSecretsId>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <SpaRoot>$(MSBuildProjectDirectory)\..\..\ClientApp\</SpaRoot>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Serilog.AspNetCore" Version="10.0.0" />
+  </ItemGroup>
+
+  <!-- Per-machine credentials. The Web SDK copies every appsettings*.json to the
+       output by default, which would put this one in the publish folder and hand
+       the developer's tokens to everyone the app is shared with. -->
+  <ItemGroup>
+    <Content Update="appsettings.Local.json">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CopyToPublishDirectory>Never</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+
+  <!-- Shipped so a colleague can start the app without a terminal, and without
+       having to know that the working directory decides the content root. -->
+  <ItemGroup>
+    <Content Include="run.cmd" CopyToOutputDirectory="Never" CopyToPublishDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <!-- appsettings.json does ship, so a credential left in it travels with the
+       app. This has happened once already; failing the publish is cheaper than
+       revoking a token. -->
+  <Target Name="GuardPublishedSecrets" BeforeTargets="PrepareForPublish">
+    <PropertyGroup>
+      <_PublishedSettings>$([System.IO.File]::ReadAllText('$(MSBuildProjectDirectory)/appsettings.json'))</_PublishedSettings>
+      <_SecretPattern>"(AtlassianApiToken|AtlassianEmail|DevOpsPersonalAccessToken)"\s*:\s*"[^"]+"</_SecretPattern>
+    </PropertyGroup>
+
+    <Error
+      Condition="$([System.Text.RegularExpressions.Regex]::IsMatch($(_PublishedSettings), $(_SecretPattern)))"
+      Text="appsettings.json has a credential in its Credentials section, and that file is published. Move it to appsettings.Local.json (gitignored, never published) or an environment variable, leave the keys empty here, and publish again." />
+  </Target>
+
+  <!-- The SPA is only built on publish, so day-to-day dotnet build stays fast.
+       In development Vite serves it instead; see the proxy in vite.config.ts. -->
+  <Target Name="RestoreSpa" Condition="!Exists('$(SpaRoot)node_modules')">
+    <Message Importance="high" Text="Restoring npm packages for the SPA..." />
+    <Exec WorkingDirectory="$(SpaRoot)" Command="npm ci" />
+  </Target>
+
+  <Target Name="BuildSpa" DependsOnTargets="RestoreSpa" AfterTargets="ComputeFilesToPublish">
+    <Message Importance="high" Text="Building the SPA into wwwroot..." />
+    <Exec WorkingDirectory="$(SpaRoot)" Command="npm run build" />
+
+    <ItemGroup>
+      <SpaDistFiles Include="$(SpaRoot)dist\**" />
+
+      <!-- Added to the publish output directly rather than copied into the source
+           tree, so nothing generated ever lands in src/. -->
+      <ResolvedFileToPublish Include="@(SpaDistFiles->'%(FullPath)')" Exclude="@(ResolvedFileToPublish)">
+        <RelativePath>wwwroot\%(RecursiveDir)%(Filename)%(Extension)</RelativePath>
+        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      </ResolvedFileToPublish>
+    </ItemGroup>
+  </Target>
+
+</Project>

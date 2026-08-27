@@ -1,0 +1,75 @@
+:root {
+  --bg: #ffffff;
+  --text: #1a1a1a;
+  --muted: #6b7280;
+  --border: #d8dbe0;
+  --panel: #fbfbfc;
+  --input: #ffffff;
+  --accent: #0b5cd5;
+  --flag: #fff6e0;
+  --error-bg: #fdecec;
+  --error-border: #f2b8b5;
+  --notice-bg: #e9f6ec;
+  --notice-border: #b7dfc2;
+  --warn-text: #a15c00;
+
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  line-height: 1.5;
+
+  /* Named per theme rather than left as 'light dark', or scrollbars, selects
+     and the date picker would follow the browser while the page follows the
+     chosen theme. */
+  color-scheme: light;
+}
+
+/*
+ * Dark values live in a named block used twice: once for "follow the system"
+ * (guarded so an explicit light choice still wins) and once for the explicit
+ * dark choice. Defining them only inside the media query would leave the
+ * toggle unable to turn dark on in a light OS.
+ */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    color-scheme: dark;
+    --bg: #16181d;
+    --text: #e8eaed;
+    --muted: #9aa1ad;
+    --border: #333842;
+    --panel: #1c1f26;
+    --input: #21252d;
+    --accent: #4b8ef7;
+    --flag: #3a2f14;
+    --error-bg: #3a1f1f;
+    --error-border: #7a3b38;
+    --notice-bg: #1c3324;
+    --notice-border: #2f5c3f;
+    --warn-text: #e0a34a;
+  }
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --bg: #16181d;
+  --text: #e8eaed;
+  --muted: #9aa1ad;
+  --border: #333842;
+  --panel: #1c1f26;
+  --input: #21252d;
+  --accent: #4b8ef7;
+  --flag: #3a2f14;
+  --error-bg: #3a1f1f;
+  --error-border: #7a3b38;
+  --notice-bg: #1c3324;
+  --notice-border: #2f5c3f;
+  --warn-text: #e0a34a;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+}

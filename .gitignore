@@ -1,0 +1,42 @@
+# Build output
+bin/
+obj/
+[Dd]ebug/
+[Rr]elease/
+publish/
+publish-test/
+
+# SPA build output - generated into wwwroot by the BuildSpa target (Phase 8)
+ClientApp/dist/
+src/ReleaseTool.Api/wwwroot/
+
+# Node
+node_modules/
+
+# Serilog file sink output (path is relative to content root)
+logs/
+*.log
+
+# Editors / tooling
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+
+# Claude Code: launch.json is shared, settings.local.json is per-developer and
+# records local paths and approved commands.
+.claude/settings.local.json
+
+# Local environment. Real secrets live in user-secrets or appsettings.Local.json,
+# neither of which belongs in the repo.
+*.env
+.env.local
+appsettings.Local.json
+
+# Settings tab state (branch names, repository list). Per-installation, not
+# per-repo - and it is written at runtime.
+App_Data/
+
+# Powershell scripts
+*.ps1

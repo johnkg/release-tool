@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "api",
+      "runtimeExecutable": "dotnet",
+      "runtimeArgs": ["watch", "--project", "src/ReleaseTool.Api", "--non-interactive"],
+      "port": 5000
+    },
+    {
+      "name": "clientapp",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev", "--prefix", "ClientApp"],
+      "port": 5173
+    }
+  ]
+}
